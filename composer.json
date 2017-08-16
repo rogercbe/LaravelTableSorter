@@ -1,11 +1,12 @@
 {
-  "name": "rogercbe/tablesorter",
+  "name": "rogercbe/table-sorter",
   "description": "A package to easily add sorting functionality to any of your models along with helpers to create the sorting links.",
-  "homepage": "https://github.com/rogercbe/tablesorter",
+  "homepage": "https://github.com/rogercbe/laravel-table-sorter",
   "license": "MIT",
   "keywords": [
     "laravel",
-    "tablesorter"
+    "table",
+    "sorter"
   ],
   "authors": [
     {

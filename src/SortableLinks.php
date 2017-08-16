@@ -34,6 +34,6 @@ trait SortableLinks
         return new SortLinksLengthAwarePaginator($results, $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
-        ], $this->tableHeaders, $this->view);
+        ], $this->tableHeaders, $this->sortLinksView);
     }
 }
