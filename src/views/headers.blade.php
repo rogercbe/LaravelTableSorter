@@ -8,12 +8,12 @@
                     @if(request('direction') == 'asc')
                         <a href="{{ $header->path('desc') }}">
                             {{ $header->title }}
-                            <i class="fa fa-sort-asc"></i>
+                            <span>&#x25BC</span>
                         </a>
                     @else
                         <a href="{{ $header->path('asc') }}">
                             {{ $header->title }}
-                            <i class="fa fa-sort-desc"></i>
+                            <span>&#x25B2</span>
                         </a>
                     @endif
                 @else
