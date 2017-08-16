@@ -35,7 +35,7 @@ class SortLinksLengthAwarePaginator extends LengthAwarePaginator
     public function __construct($items, $total, $perPage, $currentPage = null, array $options = [], $tableHeaders, $sortLinksView = null)
     {
         $this->tableHeaders = collect($tableHeaders);
-        $this->sortLinksView = $sortLinksView ?: 'components.headers';
+        $this->sortLinksView = $sortLinksView ?: 'tablesorter::headers';
 
         parent::__construct($items, $total, $perPage, $currentPage, $options);
     }
