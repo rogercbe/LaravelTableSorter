@@ -1,0 +1,27 @@
+{
+  "name": "rogercbe/tablesorter",
+  "description": "A package to easily add sorting functionality to any of your models along with helpers to create the sorting links.",
+  "homepage": "https://github.com/rogercbe/tablesorter",
+  "license": "MIT",
+  "keywords": [
+    "laravel",
+    "tablesorter"
+  ],
+  "authors": [
+    {
+      "name": "Roger Cendrós",
+      "email": "rogercbe@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ],
+    "psr-4": {
+      "Rogercbe\\TableSorter\\": "src/"
+    }
+  }
+}
