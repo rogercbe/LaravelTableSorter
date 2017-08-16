@@ -1,8 +1,6 @@
 # Laravel Table Sorter
 This package easily add sorting functionality to any of your models along with helpers to create the sorting links.
 
-Readme under development.
-
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
@@ -12,13 +10,11 @@ Readme under development.
 ## Installation
 Pull this package through Composer.
 ```sh
-composer require rogercbe/laravel-table-sorter
+composer require rogercbe/table-sorter
 ```
 After the instalation add the ServiceProvider to the providers array in your `config/app.php` file 
 ```php
-...
 Rogercbe\LaravelTableSorter\TableSorterServiceProvider::class,
-...
 ```
 Finally to publish the table header view use:
 ```sh
@@ -63,8 +59,11 @@ At the moment the relations supported are *HasOne* and *BelongsTo* with only *on
 
 If you wish to generate the pagination and table header links, this package allows to define the table headers and their options on your model and render them.
 ```php
+use Rogercbe\TableSorter\Sortable;
+
 class User extends Authenticatable
 {
+    use Sortable;
     ...
     protected $tableHeaders = [
         'name' => [
@@ -107,11 +106,12 @@ Then in your view:
 {{ $users->pagination() }}
 ...
 ```
-`sortLinks()` is a helper that will render the table headers that you specified with basic functionality, creating the links to sort ascending or descending aswell as inserting arrows to show the direction. The default view can be published to edit it, or you can specify your own by creating a `sortLinksView` property on your model. It accepts a path to a view as a parameter aswell.
-`pagination()` delegates to `links()` method from laravel paginator appending the get request values needed to sort. You are free to use either, and append the values yourself, it is just a helper.
+The method `sortLinks()` is a helper that will render the table headers that you specified with basic functionality, creating the links to sort ascending or descending aswell as inserting arrows to show the direction. The default view can be published to edit it, or you can specify your own by creating a `sortLinksView` property on your model. It accepts a path to a view as a parameter aswell.
+
+The method `pagination()` delegates to `links()` method from laravel paginator appending the get request values needed to sort. You are free to use either, and append the values yourself, it is just a helper.
 
 ## Contributing
-You are welcome to contribute to the package by submitting a Pull Request.
+You are more than welcome to contribute to the package by submitting a [Pull Request](https://github.com/rogercbe/LaravelTableSorter/pulls).
 
 ## License
-The MIT License (MIT). Please see [License File](https://github.com/yajra/laravel-datatables/blob/master/LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/rogercbe/LaravelTableSorter/blob/master/License) for more information.
