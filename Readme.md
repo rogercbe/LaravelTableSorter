@@ -14,7 +14,7 @@ composer require rogercbe/table-sorter
 ```
 After the instalation add the ServiceProvider to the providers array in your `config/app.php` file 
 ```php
-Rogercbe\LaravelTableSorter\TableSorterServiceProvider::class,
+Rogercbe\TableSorter\TableSorterServiceProvider::class,
 ```
 Finally to publish the table header view use:
 ```sh
