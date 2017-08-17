@@ -52,10 +52,10 @@ trait Sortable
                 'direction' => $direction
             ]);
 
-            $this->performJoins($query, $relations)
+            return $this->performJoins($query, $relations)
                 ->select(
                     $this->getTable() . '.*',
-                    $this->getRelatedSelectAttribute($column)
+                    $this->getRelatedSelectAttribute($query, $relations, $column)
                 )
                 ->orderBy(
                     $parameters->get('column'),
@@ -66,24 +66,30 @@ trait Sortable
         return $query->orderBy($column, $direction);
     }
 
+    /**
+     * Perform the necessary joins to construct the query.
+     *
+     * @param $query
+     * @param $relations
+     * @return mixed
+     */
     private function performJoins($query, $relations)
     {
-        foreach ($relations as $relation) {
-//            $relation = '\App\\'.ucfirst($relation);
-//            dd( new $relation);
-            $relation = $query->getRelation($relation);
+        $relation = $query->getRelation($relations->first());
 
-            dd($relation);
-
+        foreach ($relations as $key => $relationName) {
             $query = $query->join(
                 $this->relatedTable($relation),
                 $this->parentPrimaryKey($relation),
                 '=',
                 $this->relatedPrimaryKey($relation)
             );
-        }
 
-        dd();
+            if ($key < $relations->count() - 1) {
+                $relation = $relation->getQuery()
+                    ->getRelation($relations[$key + 1]);
+            }
+        }
 
         return $query;
     }
@@ -91,14 +97,28 @@ trait Sortable
     /**
      * Creates the string for the related attribute being sorted.
      *
+     * @param $query
+     * @param $relations
      * @param $column
      * @return string
      */
-    private function getRelatedSelectAttribute($column)
+    private function getRelatedSelectAttribute($query, $relations, $column)
     {
-        return $this->parseRelation($column)->slice(
-            $this->parseRelation($column)->count() - 2
-        )->implode('.') . ' as ' . $this->getSelectAsName($column);
+        $relation = $query->getRelation($relations->first());
+
+        foreach ($relations as $key => $relationName) {
+            if ($key < $relations->count() - 1) {
+                $relation = $relation->getQuery()
+                    ->getRelation($relations[$key + 1]);
+            }
+        }
+
+        $sortColumn = implode('.', [
+            $relation->getRelated()->getTable(),
+            $this->getRelatedSortAttribute($column)
+        ]);
+
+        return $sortColumn . ' as ' . $this->getSelectAsName($column);
     }
 
     /**
@@ -150,25 +170,12 @@ trait Sortable
         return request()->has('sort') && request()->has('direction');
     }
 
-    /**
-     * Get the attribute being sorted.
-     *
-     * @param $column
-     * @return string
-     */
-    private function getSortColumn($column)
-    {
-        return $this->parseRelation($column)->last();
-    }
-
     private function getRelatedModel($column)
     {
         $relations = $this->parseRelation($column);
         $relations->pop();
 
         return $relations;
-        // retornar array de relations return $this->parseRelation($column)
-//            ->first();
     }
 
     /**
@@ -207,5 +214,38 @@ trait Sortable
     private function columnIsRelated($column)
     {
         return strpos($column, '.');
+    }
+
+    /**
+     * Get the related column attribute to be sorted.
+     *
+     * @param $column
+     * @return string
+     */
+    private function getRelatedSortAttribute($column)
+    {
+        return $this->parseRelation($column)->last();
+    }
+
+    /**
+     * Get model from table name
+     *
+     * @param $name
+     * @return bool
+     */
+    private function getModelFromName($name)
+    {
+        foreach(get_declared_classes() as $class) {
+            if(is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
+                $model = new $class;
+                $modelName = (new \ReflectionClass($model))->getShortName();
+
+                if ($modelName === ucfirst($name)) {
+                    return $class;
+                }
+            }
+        }
+
+        return false;
     }
 }
