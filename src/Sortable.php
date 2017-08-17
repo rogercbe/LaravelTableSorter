@@ -37,7 +37,7 @@ trait Sortable
      *
      * @param $query
      * @param $sortParams
-     * @return mixed
+     * @return \Illuminate\Database\Query\Builder;
      */
     private function buildQuery($query, $sortParams)
     {
@@ -45,21 +45,17 @@ trait Sortable
         $direction = $sortParams->get('direction');
 
         if ($this->columnIsRelated($column)) {
-            $relatedModel = $this->getRelatedModel($column);
+            $relations = $this->getRelatedModel($column);
+
             $parameters = collect([
-                'column' => $this->getRelatedSortColumn($column),
+                'column' => $this->getSelectAsName($column),
                 'direction' => $direction
             ]);
-            $relation = $query->getRelation($relatedModel);
-            return $query->join(
-                $this->relatedTable($relation),
-                $this->parentPrimaryKey($relation),
-                '=',
-                $this->relatedPrimaryKey($relation)
-            )
+
+            $this->performJoins($query, $relations)
                 ->select(
-                    $this->parentTable($relation) . '.*',
-                    $this->getRelatedSelectAttribute($relation, $column)
+                    $this->getTable() . '.*',
+                    $this->getRelatedSelectAttribute($column)
                 )
                 ->orderBy(
                     $parameters->get('column'),
@@ -70,24 +66,58 @@ trait Sortable
         return $query->orderBy($column, $direction);
     }
 
-    private function getRelatedSelectAttribute($relation, $column)
+    private function performJoins($query, $relations)
     {
-        return implode('.', [
+        foreach ($relations as $relation) {
+//            $relation = '\App\\'.ucfirst($relation);
+//            dd( new $relation);
+            $relation = $query->getRelation($relation);
+
+            dd($relation);
+
+            $query = $query->join(
                 $this->relatedTable($relation),
-                $this->getSortColumn($column)
-            ]) . ' as ' . $this->getRelatedSortColumn($column);
+                $this->parentPrimaryKey($relation),
+                '=',
+                $this->relatedPrimaryKey($relation)
+            );
+        }
+
+        dd();
+
+        return $query;
     }
 
-    private function parentTable($relation)
+    /**
+     * Creates the string for the related attribute being sorted.
+     *
+     * @param $column
+     * @return string
+     */
+    private function getRelatedSelectAttribute($column)
     {
-        return $relation->getParent()->getTable();
+        return $this->parseRelation($column)->slice(
+            $this->parseRelation($column)->count() - 2
+        )->implode('.') . ' as ' . $this->getSelectAsName($column);
     }
 
+    /**
+     * Get related table name.
+     *
+     * @param $relation
+     * @return string
+     */
     private function relatedTable($relation)
     {
         return $relation->getRelated()->getTable();
     }
 
+    /**
+     * Get related attribute primary key.
+     *
+     * @param $relation
+     * @return string
+     */
     private function relatedPrimaryKey($relation)
     {
         if ($relation instanceof HasOne) {
@@ -96,6 +126,12 @@ trait Sortable
         return $relation->getQualifiedOwnerKeyName();
     }
 
+    /**
+     * Get primary key from the parent table.
+     *
+     * @param $relation
+     * @return string
+     */
     private function parentPrimaryKey($relation)
     {
         if ($relation instanceof HasOne) {
@@ -104,28 +140,49 @@ trait Sortable
         return $relation->getQualifiedForeignKey();
     }
 
+    /**
+     * Determine if sorting is active.
+     *
+     * @return bool
+     */
     private function sortingIsActive()
     {
         return request()->has('sort') && request()->has('direction');
     }
 
+    /**
+     * Get the attribute being sorted.
+     *
+     * @param $column
+     * @return string
+     */
     private function getSortColumn($column)
     {
         return $this->parseRelation($column)->last();
     }
 
-    private function getRelatedSortColumn($column)
-    {
-        return implode('_', [
-            $this->parseRelation($column)->first(),
-            $this->parseRelation($column)->last()
-        ]);
-    }
-
     private function getRelatedModel($column)
     {
-        return $this->parseRelation($column)
-            ->first();
+        $relations = $this->parseRelation($column);
+        $relations->pop();
+
+        return $relations;
+        // retornar array de relations return $this->parseRelation($column)
+//            ->first();
+    }
+
+    /**
+     * Created the select as name of the column,
+     * merging the table and field.
+     *
+     * @param $column
+     * @return string
+     */
+    private function getSelectAsName($column)
+    {
+        return $this->parseRelation($column)->slice(
+            $this->parseRelation($column)->count() - 2
+        )->implode('_');
     }
 
     /**

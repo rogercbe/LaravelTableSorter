@@ -16,7 +16,9 @@ class SortOptions
     public function title()
     {
         if (! $this->getProperty('title')) {
-            return ucfirst($this->key);
+            return ucfirst(
+                str_replace(['.', '_'], ' ', $this->key)
+            );
         }
 
         return $this->getProperty('title');
