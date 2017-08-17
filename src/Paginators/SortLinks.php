@@ -30,7 +30,7 @@ trait SortLinks
     public function sortLinks($view = null)
     {
         return new HtmlString(view($this->sortLinksView ?: $view, [
-            'headers' => $this->getTableHeaders()
+            'headers' => $this->parseTableHeaders()
         ])->render());
     }
 
@@ -39,10 +39,14 @@ trait SortLinks
      *
      * @return array
      */
-    private function getTableHeaders()
+    private function parseTableHeaders()
     {
         return $this->tableHeaders->map(function($header, $key) {
-            return new SortOptions($key, $header);
+            if (is_array($header)) {
+                return new SortOptions($key, $header);
+            }
+            
+            return new SortOptions($header);
         });
     }
 }
