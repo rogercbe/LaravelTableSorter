@@ -2,9 +2,9 @@
 
 namespace Rogercbe\TableSorter\Paginators;
 
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
-class SortLinksLengthAwarePaginator extends LengthAwarePaginator
+class SortLinksSimplePaginator extends Paginator
 {
     use SortLinks;
 
@@ -23,21 +23,20 @@ class SortLinksLengthAwarePaginator extends LengthAwarePaginator
     protected $sortLinksView;
 
     /**
-     * Create a new paginator instance.
+     * Create a SortLinksSimplePaginator instance.
      *
      * @param mixed $items
-     * @param int $total
      * @param int $perPage
-     * @param int|null $currentPage
+     * @param null $currentPage
      * @param array $options
      * @param $tableHeaders
-     * @param string|null $sortLinksView
+     * @param null $sortLinksView
      */
-    public function __construct($items, $total, $perPage, $currentPage = null, array $options = [], $tableHeaders, $sortLinksView = null)
+    public function __construct($items, $perPage, $currentPage = null, array $options = [], $tableHeaders, $sortLinksView = null)
     {
         $this->tableHeaders = collect($tableHeaders);
         $this->sortLinksView = $sortLinksView ?: 'tablesorter::headers';
 
-        parent::__construct($items, $total, $perPage, $currentPage, $options);
+        parent::__construct($items, $perPage, $currentPage, $options);
     }
 }
