@@ -19,7 +19,6 @@
                 @else
                     <a href="{{ $header->path }}">
                         {{ $header->title }}
-                        <i class="fa fa-sort"></i>
                     </a>
                 @endif
             @endif
