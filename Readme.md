@@ -4,10 +4,10 @@ This package easily add sorting functionality to any of your models along with h
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
--- [Sorting Model Attributes](#sorting-model-attributes)
--- [Sorting Model Relationships](#sorting-model-relationships)
--- [Sorting Model Count Relationships](#sorting-model-count-relationships)
--- [Sort Links Helper](#sort-links-helper)
+  - [Sort Model Attributes](#sort-model-attributes)
+  - [Sort Model Relationships](#sort-model-relationships)
+  - [Sort Model Count Relationships](#sort-model-count-relationships)
+  - [Sort Links Helper](#sort-links-helper)
 - [Contributing](#contributing)
 - [License](#license)
 
