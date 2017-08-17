@@ -143,6 +143,7 @@ trait Sortable
         if ($relation instanceof HasOne) {
             return $relation->getQualifiedForeignKeyName();
         }
+
         return $relation->getQualifiedOwnerKeyName();
     }
 
@@ -157,6 +158,7 @@ trait Sortable
         if ($relation instanceof HasOne) {
             return $relation->getQualifiedParentKeyName();
         }
+
         return $relation->getQualifiedForeignKey();
     }
 
@@ -225,27 +227,5 @@ trait Sortable
     private function getRelatedSortAttribute($column)
     {
         return $this->parseRelation($column)->last();
-    }
-
-    /**
-     * Get model from table name
-     *
-     * @param $name
-     * @return bool
-     */
-    private function getModelFromName($name)
-    {
-        foreach(get_declared_classes() as $class) {
-            if(is_subclass_of($class, 'Illuminate\Database\Eloquent\Model')) {
-                $model = new $class;
-                $modelName = (new \ReflectionClass($model))->getShortName();
-
-                if ($modelName === ucfirst($name)) {
-                    return $class;
-                }
-            }
-        }
-
-        return false;
     }
 }
