@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait Sortable
 {
-    use SortableLinks;
-
     /**
      * Sorts the query by the given column and direction.
      *
      * @param $query
      * @param string|null $defaultSortColumn
      * @param string $direction
-     * @return mixed
+     * @return \Illuminate\Database\Query\Builder
      */
     public function scopeSortable($query, $defaultSortColumn = null, $direction = 'asc')
     {
@@ -37,7 +35,7 @@ trait Sortable
      *
      * @param $query
      * @param $sortParams
-     * @return \Illuminate\Database\Query\Builder;
+     * @return \Illuminate\Database\Query\Builder
      */
     private function buildQuery($query, $sortParams)
     {
@@ -71,7 +69,7 @@ trait Sortable
      *
      * @param $query
      * @param $relations
-     * @return mixed
+     * @return \Illuminate\Database\Query\Builder
      */
     private function performJoins($query, $relations)
     {

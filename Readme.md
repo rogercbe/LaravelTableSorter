@@ -4,6 +4,10 @@ This package easily add sorting functionality to any of your models along with h
 ## Table of Contents
 - [Installation](#installation)
 - [Usage](#usage)
+-- [Sorting Model Attributes](#sorting-model-attributes)
+-- [Sorting Model Relationships](#sorting-model-relationships)
+-- [Sorting Model Count Relationships](#sorting-model-count-relationships)
+-- [Sort Links Helper](#sort-links-helper)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -49,13 +53,31 @@ class UsersController extends Controller
 }
 ```
 This method will respond to urls following the convention below:
-`your-site.dev/?sort={*COLUMN-TO-SORT*}&direction={asc/desc}`
-### Example:
-`your-site.dev/?sort=name&direction=asc`
-In case you wish to sort by a model relation, the relation should be specified on the column to sort
-### Example:
-`your-site.dev/?sort=company.name&direction=asc`
-`your-site.dev/?sort=company.holding.name&direction=asc`
+`your-site.dev/?sort={COLUMN-TO-SORT}&direction={asc/desc}`
+To build the url you must specify the column name that has to be sorted and the direction, the direction parameter is optional, by default the direction will be ascending.
+```
+your-site.dev/?sort={COLUMN}&direction={asc|desc}
+```
+### Sort Model Attributes
+In order to sort by model attributes you have to specify the column name which should be sorted on the `sort` request variable.
+```
+your-site.dev/?sort=name&direction=asc
+```
+### Sort Model Relationships
+In order to sort by model relationships the `sort` variable has to be set using this convention `relation.column_name`.
+```
+your-site.dev/?sort=company.name&direction=asc
+```
+There is no limit on nested relationships levels, it will perform the necessary join queries to be able to sort by the attribute selected.
+### Sort Model Count Relationships
+In order to sort by count relationships you must perform a `withCount('relation')` before calling `sortable` so Laravel can eager load the query the count relationship and attach it to the model. This way you will have avaiable the `relation_count` variable on the model and we can sort by it, specially useful in case that count has to be constrained.
+```
+your-site.dev/?sort=posts_count&direction=asc
+```
+```php
+$users = User::withCount('posts')->sortable()->paginate();
+```
+### Sort Links Helper
 If you wish to generate the pagination and table header links, this package allows to define the table headers and their options on your model and render them.
 ```php
 use Rogercbe\TableSorter\Sortable;
@@ -81,7 +103,7 @@ class User extends Authenticatable
 ```
 By default all headers are sortable, so you don't need to specify that in the headers configuration, only specify the ones that should be disabled. The title can be ommited aswell, by default it will capitalize the column name. If you wish to add certain classes to the header selector, you can pass a string or an array of strings containing the classes that should be added as the example shows.
 
-You'll need to call `sortPaginate()` method instead of laravel's `paginate()` in order to use the helper functions to render the paginator and the table header, to render those links you only need to call the `sortLinks()` method in your view.
+You'll need to call `sortPaginate()` or `sortSimplePaginate()` methods instead of laravel's `paginate()` and `simplePaginate()` in order to use the helper functions to render the paginator and the table header, to render those links you only need to call the `sortLinks()` method in your view.
 
 In your controller:
 ```php
@@ -97,11 +119,19 @@ In your controller:
 ```
 Then in your view:
 ```blade
-...
-<thead>
-    {{ $users->sortLinks() }}
-</thead>
-...
+<table>
+    <thead>
+        {{ $users->sortLinks() }}
+    </thead>
+    <tbody>
+        @foreach($users as $user)
+            <tr>
+                <td>{{ $user->company->name }}</td>
+                <td>{{ $user->name }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+<table>
 {{ $users->pagination() }}
 ...
 ```
