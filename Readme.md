@@ -54,9 +54,8 @@ This method will respond to urls following the convention below:
 `your-site.dev/?sort=name&direction=asc`
 In case you wish to sort by a model relation, the relation should be specified on the column to sort
 ### Example:
-``your-site.dev/?sort=company.name&direction=asc``
-At the moment the relations supported are *HasOne* and *BelongsTo* with only *one relationship level deep*. Currently working on this area.
-
+`your-site.dev/?sort=company.name&direction=asc`
+`your-site.dev/?sort=company.holding.name&direction=asc`
 If you wish to generate the pagination and table header links, this package allows to define the table headers and their options on your model and render them.
 ```php
 use Rogercbe\TableSorter\Sortable;
