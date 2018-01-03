@@ -141,6 +141,10 @@ trait Sortable
         if ($relation instanceof HasOne) {
             return $relation->getQualifiedForeignKeyName();
         }
+        
+        if ($relation instanceof BelongsTo) {
+            return $relation->getForeignKey();
+        }
 
         return $relation->getQualifiedOwnerKeyName();
     }
@@ -155,6 +159,10 @@ trait Sortable
     {
         if ($relation instanceof HasOne) {
             return $relation->getQualifiedParentKeyName();
+        }
+        
+        if ($relation instanceof BelongsTo) {
+            return $relation->getOtherKey();
         }
 
         return $relation->getQualifiedForeignKey();
