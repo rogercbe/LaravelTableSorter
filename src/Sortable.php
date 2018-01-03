@@ -78,7 +78,7 @@ trait Sortable
         foreach ($relations as $key => $relationName) {
             $query = $query->join(
                 $this->relatedTable($relation),
-                $this->parentPrimaryKey($relation),
+                $this->relatedTable($relation) . '.' . $this->parentPrimaryKey($relation),
                 '=',
                 $this->relatedPrimaryKey($relation)
             );
