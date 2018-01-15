@@ -3,6 +3,7 @@
 namespace Rogercbe\TableSorter;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait Sortable
 {
